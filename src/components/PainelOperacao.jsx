@@ -95,33 +95,40 @@ const PainelOperacao = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white">
             <div className="max-w-7xl mx-auto p-6">
                 <div className="text-center mb-12">
-                    <div className="flex items-center justify-center gap-3 mb-4">
-                        <Flame className="text-orange-500" size={60} />
-                        <h1 className="text-5xl font-bold bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text text-transparent">
-                            Operação Phoenix
-                        </h1>
+                    <div className="flex flex-col items-center justify-center gap-6 mb-8">
+                        <img
+                            src="/assets/phoenix-logo-full.png"
+                            alt="Phoenix Rise"
+                            className="h-24 md:h-32 object-contain drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+                        />
                     </div>
-                    <p className="text-gray-400 text-lg">Central de Comando - Acesso Rápido aos Sistemas</p>
+                    <p className="text-blue-200/80 text-lg font-light tracking-wide">Central de Comando - Acesso Rápido aos Sistemas</p>
                 </div>
 
-                <div className="mb-8">
-                    <input
-                        type="text"
-                        placeholder="Buscar sistema ou atalho..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full px-6 py-4 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-orange-500 focus:border-transparent text-lg"
-                    />
+                <div className="mb-8 max-w-2xl mx-auto">
+                    <div className="relative group">
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                        <input
+                            type="text"
+                            placeholder="O que você procura hoje?"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="relative w-full px-8 py-5 bg-gray-900/90 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-lg shadow-xl backdrop-blur-xl"
+                        />
+                    </div>
                 </div>
 
-                <div className="mb-12">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="h-1 w-12 bg-gradient-to-r from-orange-500 to-red-600 rounded"></div>
-                        <h2 className="text-2xl font-bold">Sistemas de Operação</h2>
+                <div className="mb-16">
+                    <div className="flex items-center gap-4 mb-8 pl-2">
+                        <div className="h-8 w-1.5 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+                        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                            Sistemas Globais
+                        </h2>
                     </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {sistemasOperacao.filter(s =>
                             s.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -132,24 +139,22 @@ const PainelOperacao = () => {
                                 <button
                                     key={index}
                                     onClick={() => abrirLink(sistema.url)}
-                                    className="group relative bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-orange-500 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/20"
+                                    className="group relative bg-gray-800/50 border border-gray-700/50 rounded-2xl p-6 hover:border-blue-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-500/10 backdrop-blur-sm overflow-hidden"
                                 >
-                                    <div className={`absolute inset-0 bg-gradient-to-r ${sistema.cor} opacity-0 group-hover:opacity-10 rounded-xl transition-opacity`}></div>
+                                    <div className={`absolute inset-0 bg-gradient-to-br ${sistema.cor} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
+                                    <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
+                                        <ExternalLink size={18} className="text-gray-400 group-hover:text-white" />
+                                    </div>
 
-                                    <div className="relative">
-                                        <div className={`w-16 h-16 bg-gradient-to-r ${sistema.cor} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                                            <Icon size={32} className="text-white" />
+                                    <div className="relative z-10">
+                                        <div className={`w-14 h-14 bg-gradient-to-br ${sistema.cor} rounded-xl flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                                            <Icon size={28} className="text-white drop-shadow-md" />
                                         </div>
 
-                                        <h3 className="text-xl font-bold mb-2 group-hover:text-orange-500 transition-colors">
+                                        <h3 className="text-xl font-bold mb-2 text-gray-100 group-hover:text-blue-400 transition-colors">
                                             {sistema.nome}
                                         </h3>
-                                        <p className="text-gray-400 text-sm mb-4">{sistema.descricao}</p>
-
-                                        <div className="flex items-center gap-2 text-orange-500 text-sm font-medium">
-                                            <span>Acessar</span>
-                                            <ExternalLink size={16} className="group-hover:translate-x-1 transition-transform" />
-                                        </div>
+                                        <p className="text-gray-400 text-sm leading-relaxed">{sistema.descricao}</p>
                                     </div>
                                 </button>
                             );
@@ -158,11 +163,14 @@ const PainelOperacao = () => {
                 </div>
 
                 <div>
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="h-1 w-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded"></div>
-                        <h2 className="text-2xl font-bold">Atalhos Rápidos</h2>
+                    <div className="flex items-center gap-4 mb-8 pl-2">
+                        <div className="h-8 w-1.5 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full shadow-[0_0_10px_rgba(99,102,241,0.5)]"></div>
+                        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                            Acesso Rápido
+                        </h2>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         {atalhos.filter(a =>
                             a.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
                             a.descricao.toLowerCase().includes(searchTerm.toLowerCase())
@@ -172,20 +180,22 @@ const PainelOperacao = () => {
                                 <button
                                     key={index}
                                     onClick={() => abrirLink(atalho.url)}
-                                    className="group bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-blue-500 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/20 flex items-start gap-4"
+                                    className="group bg-gray-800/40 border border-gray-700/30 rounded-xl p-5 hover:bg-gray-800/80 hover:border-indigo-500/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-indigo-500/10 flex items-center gap-5"
                                 >
-                                    <div className={`w-12 h-12 ${atalho.cor} rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
+                                    <div className={`w-12 h-12 ${atalho.cor} rounded-lg flex items-center justify-center flex-shrink-0 shadow-lg group-hover:ring-2 ring-white/20 transition-all`}>
                                         <Icon size={24} className="text-white" />
                                     </div>
 
                                     <div className="flex-1 text-left">
-                                        <h3 className="text-lg font-bold mb-1 group-hover:text-blue-400 transition-colors">
+                                        <h3 className="text-lg font-bold text-gray-200 group-hover:text-indigo-300 transition-colors">
                                             {atalho.nome}
                                         </h3>
-                                        <p className="text-gray-400 text-sm">{atalho.descricao}</p>
+                                        <p className="text-gray-500 text-xs font-medium uppercase tracking-wider">{atalho.descricao}</p>
                                     </div>
 
-                                    <ExternalLink size={18} className="text-gray-500 group-hover:text-blue-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                                    <div className="w-8 h-8 rounded-full bg-gray-700/50 flex items-center justify-center group-hover:bg-indigo-500/20 group-hover:text-indigo-400 transition-colors">
+                                        <ExternalLink size={14} />
+                                    </div>
                                 </button>
                             );
                         })}
@@ -193,15 +203,18 @@ const PainelOperacao = () => {
                 </div>
 
                 {searchTerm && itensFiltrados.length === 0 && (
-                    <div className="text-center py-12">
+                    <div className="text-center py-20">
+                        <div className="inline-block p-4 rounded-full bg-gray-800/50 mb-4">
+                            <Zap size={32} className="text-gray-600" />
+                        </div>
                         <p className="text-gray-500 text-lg">Nenhum resultado encontrado para "{searchTerm}"</p>
                     </div>
                 )}
 
-                <div className="mt-16 text-center">
-                    <div className="inline-flex items-center gap-2 px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg">
-                        <Flame className="text-orange-500" size={20} />
-                        <span className="text-gray-400">Powered by Phoenix Rise</span>
+                <div className="mt-20 text-center border-t border-gray-800 pt-8">
+                    <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-gray-900/50 border border-gray-800">
+                        <img src="/assets/phoenix-icon-white.png" alt="Phoenix" className="w-5 h-5 opacity-70" />
+                        <span className="text-gray-500 text-sm font-medium tracking-wide">Powered by Phoenix Rise Digital Performance</span>
                     </div>
                 </div>
             </div>
