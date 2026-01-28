@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ExternalLink, Flame, DollarSign, Users, Trello, CreditCard, HardDrive, MessageSquare, Share2, Mail, Calendar, Zap } from 'lucide-react';
 
 const PainelOperacao = () => {
     const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
 
     const sistemasOperacao = [
         {
@@ -14,7 +16,7 @@ const PainelOperacao = () => {
         },
         {
             nome: 'CRM Phoenix',
-            url: 'https://phoenix-lead-hub.vercel.app/',
+            url: '/crm',
             descricao: 'Gestão de leads e clientes',
             icon: Users,
             cor: 'from-orange-500 to-red-600'
@@ -91,7 +93,11 @@ const PainelOperacao = () => {
     );
 
     const abrirLink = (url) => {
-        window.open(url, '_blank', 'noopener,noreferrer');
+        if (url.startsWith('/')) {
+            navigate(url);
+        } else {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
     };
 
     return (
