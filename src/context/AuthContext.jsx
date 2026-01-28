@@ -1,78 +1,89 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { supabase } from '../lib/supabase';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState([]); // List of ALL profiles for team dropdowns
     const [loading, setLoading] = useState(true);
 
-    // Hardcoded Admin
-    const ADMIN_USER = {
-        id: 'admin-001',
-        name: 'Administrador',
-        email: 'contato@leadsign.com.br',
-        role: 'admin',
-        avatar: null
-    };
-
-    const ADMIN_PASS = 'Phoenix120126#';
+    const ADMIN_EMAIL = 'contato@leadsign.com.br';
 
     useEffect(() => {
-        // Load users from localStorage
-        const storedUsers = localStorage.getItem('phoenix_users');
-        if (storedUsers) {
-            setUsers(JSON.parse(storedUsers));
-        }
+        // 1. Get Session
+        const getSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session?.user) {
+                // Fetch profile to get role
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', session.user.id)
+                    .single();
 
-        // Check for active session
-        const session = localStorage.getItem('phoenix_session');
-        if (session) {
-            setUser(JSON.parse(session));
-        }
-        setLoading(false);
+                setUser({ ...session.user, ...profile });
+            } else {
+                setUser(null);
+            }
+            setLoading(false);
+        };
+
+        getSession();
+
+        // 2. Listen for Auth Changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+            if (session?.user) {
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', session.user.id)
+                    .single();
+                setUser({ ...session.user, ...profile });
+            } else {
+                setUser(null);
+            }
+            setLoading(false);
+        });
+
+        // 3. Fetch All Team Members (for dropdowns)
+        const fetchTeam = async () => {
+            const { data } = await supabase.from('profiles').select('*');
+            if (data) setUsers(data);
+        };
+        fetchTeam();
+
+        return () => subscription.unsubscribe();
     }, []);
 
-    const login = (email, password) => {
-        // 1. Check Admin
-        if (email === ADMIN_USER.email && password === ADMIN_PASS) {
-            const adminSession = { ...ADMIN_USER };
-            setUser(adminSession);
-            localStorage.setItem('phoenix_session', JSON.stringify(adminSession));
-            return { success: true };
-        }
-
-        // 2. Check Registered Users
-        const foundUser = users.find(u => u.email === email && u.password === password);
-        if (foundUser) {
-            const userSession = { ...foundUser }; // Exclude password ideally
-            setUser(userSession);
-            localStorage.setItem('phoenix_session', JSON.stringify(userSession));
-            return { success: true };
-        }
-
-        return { success: false, message: 'Credenciais inválidas' };
+    const login = async (email, password) => {
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+        if (error) return { success: false, message: error.message };
+        return { success: true };
     };
 
-    const logout = () => {
+    const logout = async () => {
+        await supabase.auth.signOut();
         setUser(null);
-        localStorage.removeItem('phoenix_session');
     };
 
-    const registerUser = (newUser) => {
-        const userWithId = { ...newUser, id: uuidv4(), role: 'user' };
-        const updatedUsers = [...users, userWithId];
-        setUsers(updatedUsers);
-        localStorage.setItem('phoenix_users', JSON.stringify(updatedUsers));
-        return userWithId;
+    // NOTE: Creating users programmatically usually requires Admin API (Service Role)
+    // For this client-side demo, we just rely on normal SignUp or invite manually via Dashboard.
+    // Ideally, "registerUser" would call a Supabase Edge Function.
+    // For now, we simulate a success message but tell user to invite via Dashboard.
+    const registerUser = async (newUser) => {
+        // Warning: Sign Up here logs the current user out if we blindly use signUp() client side!
+        // Proper way: Use Admin API in an Edge Function.
+        return { success: false, message: 'Adicione usuários via painel do Supabase > Authentication.' };
     };
 
-    const deleteUser = (userId) => {
-        const updatedUsers = users.filter(u => u.id !== userId);
-        setUsers(updatedUsers);
-        localStorage.setItem('phoenix_users', JSON.stringify(updatedUsers));
-    }
+    const deleteUser = async (userId) => {
+        // Requires Admin API
+        return { success: false, message: 'Remova usuários via painel do Supabase.' };
+    };
 
     return (
         <AuthContext.Provider value={{ user, users, login, logout, registerUser, deleteUser, loading }}>
