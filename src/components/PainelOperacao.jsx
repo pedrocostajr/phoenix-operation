@@ -22,8 +22,8 @@ const PainelOperacao = () => {
             cor: 'from-orange-500 to-red-600'
         },
         {
-            nome: 'Trello Phoenix',
-            url: 'https://phoenix-boards.vercel.app/',
+            nome: 'Phoenix Boards',
+            url: 'https://phoenix-boards.vercel.app/auth',
             descricao: 'Gestão de projetos e tarefas',
             icon: Trello,
             cor: 'from-blue-500 to-indigo-600'
